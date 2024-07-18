@@ -1,0 +1,126 @@
+---
+title: "R Notebook for hypothesis tests"
+output:
+  html_document:
+    toc: yes
+    toc_float: TRUE
+    theme: united
+    df_print: paged
+---
+Set up hypotheses first. Then, only keep the P-values for the correct hypthesis test 
+(left sided, right sided, two-sided test). Make sure that the sample evidence
+supports the altenative hypothesis; otherwise the null hypothesis is accepted
+by default.
+
+
+# One sample means test with with std dev unknown (t-test)
+```{r}
+#Input Data
+hypoMean<-0
+sampleN<-10
+xbar<-0.084
+sampleStdDev<-0.0844
+#Computations
+  #Std Dev of xbar (std error, SE)
+xbarSE<-sampleStdDev/sqrt(sampleN)
+Tstat<-(xbar-hypoMean)/xbarSE
+#print the t statistic
+Tstat  
+# Choose the right P-value according to the null hypothesis
+# P-value for left-tailed test
+#Pvalue<-pt(Tstat,sampleN-1)
+# P-value for right-tailed test
+Pvalue<-1-pt(Tstat,sampleN-1)
+# P-value for two-tailed test
+#Pvalue<-2*pt(-abs(Tstat),sampleN-1)
+Pvalue
+```
+
+
+
+# One sample proportion test (Z-test)
+```{r}
+#Input Data
+hypoProp<-0.25
+sampleN<- nrow(myCD)
+sampleProp<-sum(myCD$Manufacturer == "Kellogg")/nrow(myCD)
+#Computations
+ #Compute std dev of sample proportion (Std error of sample proportion)
+myPropSE<-sqrt(sampleProp*(1-sampleProp)/sampleN)
+Zstat<-(sampleProp-hypoProp)/myPropSE
+#Print the Z statistic
+Zstat
+# Choose the right P-value according to the null hypothesis
+#P-value for left-tailed test
+#Pvalue<-pnorm(Zstat)
+#P-value for right-tailed test
+Pvalue<-(1-pnorm(Zstat))
+#P-value for two-tailed test
+#Pvalue<-2*pnorm(-abs(Zstat))
+#Print the P-value
+Pvalue
+```
+
+
+
+# Two sample means test 
+This two sample measn test assumes "equal" variances (Pooled t-test)
+```{r}
+#Input Data
+hypoDiff<-0.0
+sampleN1<-40
+sampleN2<-37
+xbar1<-5.3
+xbar2<-6.5
+#sampleSD1<-1.99
+#sampleSD2<-1.16
+sampleV1<-sqrt(1.99)
+sampleV2<-sqrt(2.36)
+#Computations with Standard Daviation
+#pooledVar<-((sampleN1-1)*sampleSD1^2 + (sampleN2-1)*sampleSD2^2)/(sampleN1+sampleN2-2)
+#Tstat<-(xbar1-xbar2-hypoDiff)/sqrt(pooledVar*(1/sampleN1+1/sampleN2))
+
+#Computations with Variance
+pooledVar<-((sampleN1-1)*sampleV1^2 + (sampleN2-1)*sampleV2^2)/(sampleN1+sampleN2-2)
+Tstat<-(xbar1-xbar2-hypoDiff)/sqrt(pooledVar*(1/sampleN1+1/sampleN2))
+#print the t statistic
+Tstat  
+# Choose the right P-value according to the null hypothesis
+# P-value for left-tailed test
+#Pvalue<-pt(Tstat,sampleN1+sampleN2-2)
+# P-value for right-tailed test
+#Pvalue<-1-pt(Tstat,sampleN1+sampleN2-2)
+# P-value for two-tailed test
+Pvalue<-2*pt(-abs(Tstat),sampleN1+sampleN2-2)
+Pvalue
+```
+
+# Paired t test for differences.
+
+Compute the difference for each pair of observations. Compute sample mean and sample standard deviation for the differences. Then apply the one sample t test on the differences (see first script).
+
+
+
+# Two sample proportions test (Z-test)
+```{r}
+#Input Data
+hypoDiff<-0.0
+sampleP1<-63/78
+sampleP2<-49/82
+pooledP<-(63+49)/(78+82)
+sampleN1<-78
+sampleN2<-82
+#Computations
+Zstat<-(sampleP1-sampleP2-hypoDiff)/sqrt(pooledP*(1-pooledP)*(1/sampleN1+1/sampleN2))
+#Print the Z statistic
+Zstat
+# Choose the right P-value according to the null hypothesis
+#P-value for left-tailed test
+#Pvalue<-pnorm(Zstat)
+#P-value for right-tailed test
+#Pvalue<-(1-pnorm(Zstat))
+#P-value for two-tailed test
+Pvalue<- 2 * pnorm(-abs(Zstat))
+#Print the P-value
+Pvalue
+```
